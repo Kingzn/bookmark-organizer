@@ -763,3 +763,31 @@ dialog::backdrop {
 #loadLocalBtn + .action-hint {
     display: none;
 }
+
+
+#classifyBtn:not(:disabled) {
+    background: var(--blue);
+    border-color: var(--blue);
+    color: white;
+    box-shadow: 0 10px 22px rgba(37, 99, 235, 0.2);
+}
+
+#classifyBtn:not(:disabled):hover {
+    background: #1d4ed8;
+    border-color: #1d4ed8;
+}
+
+#classifyBtn.is-working {
+    color: white;
+    border-color: transparent;
+    background: linear-gradient(110deg, var(--blue), var(--teal), var(--violet), var(--blue));
+    background-size: 240% 100%;
+    animation: classifyFlow 1.35s linear infinite;
+    box-shadow: 0 10px 24px rgba(13, 148, 136, 0.26);
+}
+
+@keyframes classifyFlow {
+    to {
+          background-position: 240% 0;
+    }
+}
