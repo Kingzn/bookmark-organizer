@@ -7,7 +7,7 @@ import { fileURLToPath } from "node:url";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const publicDir = path.join(__dirname, "public");
 const port = Number(process.env.PORT || 4173);
-const host = process.env.HOST || "127.0.0.1";
+const host = /^[a-z0-9.:-]+$/i.test(process.env.HOST || "") ? process.env.HOST : "0.0.0.0";
 const defaultBookmarkFile = process.env.BOOKMARK_FILE || "";
 
 const mimeTypes = new Map([
