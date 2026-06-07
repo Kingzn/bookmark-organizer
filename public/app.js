@@ -792,21 +792,49 @@ function renderReviewDialog() {
   const candidates = state.bookmarks.filter(
     (bookmark) => !bookmark.deleted && ["invalid", "review"].includes(bookmark.status),
   );
-  elements.reviewSummary.textContent = `${candidates.length} 条需要你决定是否移除。`;
+  const groups = [
+    {
+      status: "invalid",
+      title: "可能失效",
+      note: "访问失败或返回错误，默认勾选删除。",
+    },
+    {
+      status: "review",
+      title: "需确认",
+      note: "链接有跳转、限制或超时，需要你再判断。",
+    },
+  ];
+  elements.reviewSummary.textContent = `${candidates.length} 条需要你决定是否移除，已按链接状态分组。`;
   elements.reviewList.innerHTML = "";
-  for (const bookmark of candidates) {
-    const item = document.createElement("label");
-    item.className = "review-item";
-    item.innerHTML = `
-      <input type="checkbox" value="${escapeHtml(bookmark.id)}" ${bookmark.status === "invalid" ? "checked" : ""} />
-      <span>
-        <strong>${escapeHtml(bookmark.title)}</strong>
-        <span>${escapeHtml(bookmark.url)}</span>
-        <span>${escapeHtml(bookmark.statusDetail || "")}</span>
-      </span>
-      <span class="status-pill ${statusClass(bookmark.status)}">${escapeHtml(statusLabel(bookmark))}</span>
+  for (const group of groups) {
+    const items = candidates.filter((bookmark) => bookmark.status === group.status);
+    if (!items.length) continue;
+    const section = document.createElement("section");
+    section.className = "review-group";
+    section.innerHTML = `
+      <div class="review-group-head">
+        <div>
+          <h4>${escapeHtml(group.title)}</h4>
+          <p>${escapeHtml(group.note)}</p>
+        </div>
+        <span class="status-pill ${statusClass(group.status)}">${items.length} 条</span>
+      </div>
     `;
-    elements.reviewList.append(item);
+    for (const bookmark of items) {
+      const item = document.createElement("label");
+      item.className = "review-item";
+      item.innerHTML = `
+        <input type="checkbox" value="${escapeHtml(bookmark.id)}" ${bookmark.status === "invalid" ? "checked" : ""} />
+        <span class="review-main">
+          <strong>${escapeHtml(bookmark.title)}</strong>
+          <span>${escapeHtml(bookmark.url)}</span>
+          <span>${escapeHtml(bookmark.statusDetail || "")}</span>
+        </span>
+        <span class="status-pill ${statusClass(bookmark.status)}">${escapeHtml(statusLabel(bookmark))}</span>
+      `;
+      section.append(item);
+    }
+    elements.reviewList.append(section);
   }
 }
 
@@ -948,7 +976,7 @@ function bindEvents() {
       setStatus(error.message);
     });
   });
-  elements.loadLocalBtn.addEventListener("click", () => {
+  elements.loadLocalBtn?.addEventListener("click", () => {
     loadLocalBookmarks().catch((error) => setStatus(error.message));
   });
   elements.fileInput.addEventListener("change", async () => {
