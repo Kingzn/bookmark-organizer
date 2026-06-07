@@ -218,6 +218,11 @@ button:focus-visible {
   margin-top: 10px;
 }
 
+#loadLocalBtn,
+#loadLocalBtn + .action-hint {
+  display: none;
+}
+
 .primary-action {
   background: var(--teal);
   border-color: var(--teal);
@@ -226,6 +231,33 @@ button:focus-visible {
 
 .secondary-action {
   background: #f8fbfc;
+}
+
+#classifyBtn:not(:disabled) {
+  background: var(--blue);
+  border-color: var(--blue);
+  color: white;
+  box-shadow: 0 10px 22px rgba(37, 99, 235, 0.2);
+}
+
+#classifyBtn:not(:disabled):hover {
+  background: #1d4ed8;
+  border-color: #1d4ed8;
+}
+
+#classifyBtn.is-working {
+  color: white;
+  border-color: transparent;
+  background: linear-gradient(110deg, var(--blue), var(--teal), var(--violet), var(--blue));
+  background-size: 240% 100%;
+  animation: classifyFlow 1.35s linear infinite;
+  box-shadow: 0 10px 24px rgba(13, 148, 136, 0.26);
+}
+
+@keyframes classifyFlow {
+  to {
+    background-position: 240% 0;
+  }
 }
 
 .file-picker input {
@@ -286,6 +318,15 @@ button:focus-visible {
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
+}
+
+.toolbar-hint {
+  max-width: 360px;
+  margin: -2px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.45;
+  text-align: right;
 }
 
 .toolbar-stack {
@@ -661,12 +702,41 @@ dialog::backdrop {
   overflow: auto;
 }
 
+.review-group {
+  border-bottom: 1px solid var(--line);
+  padding: 8px 0 12px;
+}
+
+.review-group:last-child {
+  border-bottom: 0;
+}
+
+.review-group-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 6px 0 8px;
+}
+
+.review-group-head h4 {
+  margin: 0;
+  font-size: 15px;
+}
+
+.review-group-head p {
+  margin: 3px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
 .review-item {
   display: grid;
   grid-template-columns: auto 1fr auto;
   align-items: center;
   gap: 10px;
-  border-bottom: 1px solid var(--line);
+  border-top: 1px solid var(--line);
   padding: 10px 0;
 }
 
@@ -685,6 +755,20 @@ dialog::backdrop {
   color: var(--muted);
   font-size: 12px;
   margin-top: 3px;
+}
+
+.review-item .status-pill {
+  display: inline-flex;
+  color: var(--muted);
+  margin-top: 0;
+}
+
+.review-item .status-pill.review {
+  color: var(--amber);
+}
+
+.review-item .status-pill.invalid {
+  color: var(--coral);
 }
 
 .dialog-actions {
@@ -728,6 +812,11 @@ dialog::backdrop {
   .toolbar-stack {
     justify-items: stretch;
   }
+
+  .toolbar-hint {
+    max-width: none;
+    text-align: left;
+  }
 }
 
 @media (max-width: 560px) {
@@ -756,38 +845,4 @@ dialog::backdrop {
   .task-progress.compact {
     min-width: 0;
   }
-}
-
-
-#loadLocalBtn,
-#loadLocalBtn + .action-hint {
-    display: none;
-}
-
-
-#classifyBtn:not(:disabled) {
-    background: var(--blue);
-    border-color: var(--blue);
-    color: white;
-    box-shadow: 0 10px 22px rgba(37, 99, 235, 0.2);
-}
-
-#classifyBtn:not(:disabled):hover {
-    background: #1d4ed8;
-    border-color: #1d4ed8;
-}
-
-#classifyBtn.is-working {
-    color: white;
-    border-color: transparent;
-    background: linear-gradient(110deg, var(--blue), var(--teal), var(--violet), var(--blue));
-    background-size: 240% 100%;
-    animation: classifyFlow 1.35s linear infinite;
-    box-shadow: 0 10px 24px rgba(13, 148, 136, 0.26);
-}
-
-@keyframes classifyFlow {
-    to {
-          background-position: 240% 0;
-    }
 }
