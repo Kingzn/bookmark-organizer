@@ -42,8 +42,6 @@
             <span>导入</span>
             <strong id="importState">0</strong>
           </div>
-          <button class="primary-action" id="loadLocalBtn" type="button">载入当前书签包</button>
-          <p class="action-hint">读取这次会话里默认的浏览器书签导出文件。</p>
           <label class="file-picker">
             <input id="fileInput" type="file" accept=".html,.htm,text/html" />
             <span>选择书签 HTML</span>
@@ -93,6 +91,7 @@
               <button id="checkInvalidBtn" type="button" disabled>检查无效标签</button>
               <button id="reviewBtn" type="button" disabled>删除确认</button>
             </div>
+            <p class="toolbar-hint">逐个访问书签链接，根据返回状态、访问失败和超时标记为正常、需确认或可能失效；不会自动删除。</p>
             <div class="task-progress compact hidden" id="invalidProgress" aria-live="polite">
               <div class="task-progress-head">
                 <span id="invalidProgressMeta">检测进度</span>
