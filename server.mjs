@@ -18,6 +18,24 @@ const mimeTypes = new Map([
   [".svg", "image/svg+xml"],
 ]);
 
+const wikipediaCache = new Map();
+const compoundPublicSuffixes = new Set([
+  "com.au",
+  "com.br",
+  "com.cn",
+  "com.hk",
+  "com.sg",
+  "com.tw",
+  "co.jp",
+  "co.kr",
+  "co.nz",
+  "co.uk",
+  "co.in",
+  "gov.cn",
+  "net.cn",
+  "org.cn",
+]);
+
 function sendJson(res, status, payload) {
   const body = JSON.stringify(payload);
   res.writeHead(status, {
@@ -61,6 +79,102 @@ function normalizeUrl(url) {
   const parsed = new URL(url);
   if (!["http:", "https:"].includes(parsed.protocol)) return null;
   return parsed;
+}
+
+function coreDomainName(host = "") {
+  const labels = String(host || "")
+    .toLowerCase()
+    .replace(/^www\./, "")
+    .split(".")
+    .filter(Boolean);
+  if (!labels.length) return "";
+  if (labels.length === 1) return labels[0];
+  const suffix = labels.slice(-2).join(".");
+  if (compoundPublicSuffixes.has(suffix) && labels.length >= 3) return labels[labels.length - 3];
+  return labels[labels.length - 2];
+}
+
+function cleanSnippet(value = "") {
+  return decodeEntities(String(value || "").replace(/<[^>]+>/g, " "))
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+async function fetchJsonWithTimeout(url, timeoutMs) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const response = await fetch(url, {
+      signal: controller.signal,
+      headers: {
+        "user-agent":
+          "Mozilla/5.0 (Macintosh; Intel Mac OS X) AppleWebKit/537.36 BookmarkOrganizer/1.0",
+        accept: "application/json",
+      },
+    });
+    if (!response.ok) throw new Error(`Wikipedia returned ${response.status}`);
+    return response.json();
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+function wikipediaUrl(language, title) {
+  return `https://${language}.wikipedia.org/wiki/${encodeURIComponent(String(title || "").replaceAll(" ", "_"))}`;
+}
+
+async function searchWikipediaLanguage(language, query) {
+  const url = new URL(`https://${language}.wikipedia.org/w/api.php`);
+  url.searchParams.set("action", "query");
+  url.searchParams.set("list", "search");
+  url.searchParams.set("format", "json");
+  url.searchParams.set("srlimit", "3");
+  url.searchParams.set("srsearch", query);
+  const payload = await fetchJsonWithTimeout(url, 1500);
+  const results = Array.isArray(payload?.query?.search) ? payload.query.search : [];
+  if (!results.length) return null;
+  const normalizedQuery = query.toLowerCase();
+  const preferred =
+    results.find((item) => String(item.title || "").toLowerCase().includes(normalizedQuery)) || results[0];
+  return {
+    query,
+    language,
+    title: preferred.title || "",
+    snippet: cleanSnippet(preferred.snippet || ""),
+    url: wikipediaUrl(language, preferred.title || query),
+  };
+}
+
+async function lookupWikipediaDomain(host = "") {
+  const query = coreDomainName(host);
+  if (!query || query.length < 2 || /^\d+$/.test(query)) return null;
+  if (wikipediaCache.has(query)) return wikipediaCache.get(query);
+
+  const lookup = (async () => {
+    const settled = await Promise.allSettled(
+      ["zh", "en"].map((language) => searchWikipediaLanguage(language, query)),
+    );
+    for (const result of settled) {
+      if (result.status === "fulfilled" && result.value) {
+        return result.value;
+      }
+    }
+    return null;
+  })();
+
+  wikipediaCache.set(query, lookup);
+  return lookup;
+}
+
+function wikipediaMetadata(wikipedia) {
+  if (!wikipedia) return {};
+  return {
+    wikipediaQuery: wikipedia.query,
+    wikipediaLanguage: wikipedia.language,
+    wikipediaTitle: wikipedia.title,
+    wikipediaSnippet: wikipedia.snippet,
+    wikipediaUrl: wikipedia.url,
+  };
 }
 
 async function attemptFetch(url, method, timeoutMs) {
@@ -177,8 +291,10 @@ function extractKeywordsFromText(text) {
 async function analyzeOne(item, options = {}) {
   const startedAt = Date.now();
   const includeText = Boolean(options.includeText);
+  let parsed = null;
+  let wikipediaPromise = null;
   try {
-    const parsed = normalizeUrl(item.url);
+    parsed = normalizeUrl(item.url);
     if (!parsed) {
       return {
         id: item.id,
@@ -190,6 +306,7 @@ async function analyzeOne(item, options = {}) {
         ms: Date.now() - startedAt,
       };
     }
+    wikipediaPromise = lookupWikipediaDomain(parsed.hostname).catch(() => null);
 
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), 5500);
@@ -215,6 +332,7 @@ async function analyzeOne(item, options = {}) {
           metadata.pageKeywords = extractKeywordsFromText(pageText);
         }
       }
+      const wikipedia = await wikipediaPromise;
       return {
         id: item.id,
         url: item.url,
@@ -225,6 +343,7 @@ async function analyzeOne(item, options = {}) {
         host: new URL(response.url).hostname,
         contentType,
         ...metadata,
+        ...wikipediaMetadata(wikipedia),
         detail: response.statusText || "",
         ms: Date.now() - startedAt,
       };
@@ -232,12 +351,14 @@ async function analyzeOne(item, options = {}) {
       clearTimeout(timer);
     }
   } catch (error) {
+    const wikipedia = wikipediaPromise ? await wikipediaPromise : null;
     return {
       id: item.id,
       url: item.url,
       ok: false,
       state: "review",
-      host: "",
+      host: parsed?.hostname || "",
+      ...wikipediaMetadata(wikipedia),
       detail: error?.name === "AbortError" ? "页面元信息读取超时" : error?.message || "无法读取页面元信息",
       ms: Date.now() - startedAt,
     };
