@@ -6,19 +6,19 @@ const linkCategoryRules = [
   { name: "AI模型与助手", keywords: ["openai", "chatgpt", "claude", "gemini", "grok", "kimi", "deepseek", "qwen", "大语言", "llm", "模型", "智能体", "agent", "prompt", "ai assistant"] },
   { name: "AI图像视频创作", keywords: ["midjourney", "stable diffusion", "comfyui", "可灵", "海螺", "hailuo", "runway", "pika", "绘画", "生图", "视频生成", "ai video", "image generation", "aigc"] },
   { name: "AI编程与开发助手", keywords: ["cursor", "trae", "copilot", "windsurf", "cline", "代码助手", "ai coding", "ide", "mcp", "agentic coding"] },
-  { name: "设计素材与图片", keywords: ["shutterstock", "freepik", "pixabay", "unsplash", "depositphotos", "素材", "图片", "图库", "矢量", "插画", "icon", "图标", "站酷", "zcool", "花瓣", "behance", "dribbble"] },
+  { name: "设计素材与图片", keywords: ["shutterstock", "freepik", "pixabay", "unsplash", "depositphotos", "素材", "图片", "图库", "矢量", "插画", "icon", "图标", "站酷", "zcool", "花瓣", "behance", "dribbble", "graphics", "graphic design", "image editing", "creative software", "设计软件", "创意软件"] },
   { name: "品牌字体与配色", keywords: ["font", "fonts", "字体", "配色", "color", "palette", "logo", "brand", "品牌", "规范", "ui gradients", "色彩"] },
   { name: "3D模型与打印", keywords: ["thingiverse", "ultimaker", "cura", "3d", "模型", "打印", "stl", "c4d", "blender", "gambody", "cg", "render"] },
   { name: "生物医药公司", keywords: ["biotech", "pharma", "genomics", "gene", "cell", "protein", "antibody", "illumina", "mindray", "华大", "迈瑞", "生物", "医药", "基因", "细胞", "抗体", "试剂"] },
   { name: "医学文献与监管", keywords: ["pubmed", "ncbi", "nmpa", "fda", "clinical", "药监", "医疗器械", "临床", "论文", "文献", "指南", "标准"] },
-  { name: "在线转换与实用工具", keywords: ["convert", "converter", "compress", "pdf", "ocr", "resize", "download", "tester", "generator", "在线", "转换", "压缩", "识别", "生成器", "测试"] },
+  { name: "在线转换与实用工具", keywords: ["convert", "converter", "compress", "pdf", "ocr", "resize", "download", "tester", "generator", "utility", "utilities", "tool", "在线", "转换", "压缩", "识别", "生成器", "测试", "实用程序"] },
   { name: "营销与公众号运营", keywords: ["marketing", "seo", "ads", "analytics", "campaign", "公众号", "微信", "舆情", "营销", "广告", "海报", "h5", "xiumi", "eqxiu", "crm"] },
   { name: "建站域名与云服务", keywords: ["wordpress", "wix", "domain", "hosting", "dns", "cloudflare", "aliyun", "腾讯云", "vercel", "netlify", "建站", "域名", "服务器", "ssl"] },
-  { name: "开发技术与开源项目", keywords: ["github", "gitlab", "gitee", "stackoverflow", "developer", "docs", "api", "npm", "docker", "python", "javascript", "wireshark", "microsoft learn", "sdk"] },
+  { name: "开发技术与开源项目", keywords: ["github", "gitlab", "gitee", "stackoverflow", "developer", "docs", "api", "npm", "docker", "python", "javascript", "wireshark", "microsoft learn", "sdk", "software development", "programming", "open source", "open-source", "developer platform", "软件开发", "编程", "开源"] },
   { name: "课程教程与知识库", keywords: ["教程", "课程", "学习", "academy", "khan", "wiki", "知乎", "csdn", "cnblogs", "bilibili", "文档", "learn", "manual", "training"] },
   { name: "办公协作与公司系统", keywords: ["trello", "office", "oa", "dashboard", "admin", "workspace", "工作台", "客户中心", "控制台", "公司", "企业", "协同", "项目管理"] },
   { name: "邮箱账号与登录入口", keywords: ["mail", "gmail", "qq.com", "163.com", "alimail", "accounts", "login", "signin", "登录", "邮箱", "收件箱", "account"] },
-  { name: "社交博客与内容平台", keywords: ["facebook", "instagram", "twitter", "x.com", "weibo", "renren", "sina", "blog", "wordpress", "博客", "社区", "论坛", "小红书"] },
+  { name: "社交博客与内容平台", keywords: ["facebook", "instagram", "twitter", "x.com", "weibo", "renren", "sina", "blog", "wordpress", "博客", "社区", "论坛", "小红书", "social networking", "social media", "microblogging", "社交网络", "社交媒体"] },
   { name: "影音娱乐与游戏", keywords: ["netflix", "youtube", "music", "video", "movie", "game", "游戏", "电影", "音乐", "视频", "podcast", "bilibili"] },
   { name: "网络代理与安全", keywords: ["clash", "v2ray", "trojan", "vpn", "proxy", "shadowsocks", "riolu", "fanqiang", "代理", "科学上网", "翻墙", "机场", "安全"] },
   { name: "政务金融与个人事务", keywords: ["gov", "政府", "政务", "银行", "金融", "征信", "信用", "房屋", "登记", "税务", "公积金"] },
@@ -235,6 +235,10 @@ function hasProfile() {
   return elements.industry.value.trim().length > 0 && elements.role.value.trim().length > 0;
 }
 
+function needsServerRuntime() {
+  return window.location.protocol === "file:";
+}
+
 function profileMissingText() {
   const missing = [];
   if (!elements.industry.value.trim()) missing.push("行业");
@@ -246,7 +250,7 @@ function profileText() {
   return `${elements.industry.value} ${elements.role.value}`.toLowerCase();
 }
 
-function linkText(bookmark) {
+function baseLinkText(bookmark) {
   const analysis = bookmark.analysis || {};
   return [
     bookmark.title,
@@ -265,8 +269,26 @@ function linkText(bookmark) {
     .toLowerCase();
 }
 
+function wikipediaText(bookmark) {
+  const analysis = bookmark.analysis || {};
+  return [
+    analysis.wikipediaQuery,
+    analysis.wikipediaTitle,
+    analysis.wikipediaSnippet,
+    analysis.wikipediaUrl,
+  ]
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase();
+}
+
+function linkText(bookmark) {
+  return [baseLinkText(bookmark), wikipediaText(bookmark)].filter(Boolean).join(" ");
+}
+
 function scoreBookmark(bookmark, rule, profile) {
-  const text = linkText(bookmark);
+  const text = baseLinkText(bookmark);
+  const wiki = wikipediaText(bookmark);
   let score = 0;
   const matched = [];
   for (const keyword of rule.keywords) {
@@ -275,10 +297,15 @@ function scoreBookmark(bookmark, rule, profile) {
       score += 6;
       matched.push(keyword);
     }
+    if (wiki.includes(normalized)) {
+      score += 4;
+      if (!matched.includes(`维基百科:${keyword}`)) matched.push(`维基百科:${keyword}`);
+    }
     if (profile.includes(normalized)) score += 2;
   }
   if (profile.includes(rule.name.toLowerCase())) score += 3;
   if (bookmark.analysis?.pageTitle) score += 1;
+  if (bookmark.analysis?.wikipediaTitle) score += 1;
   return { score, matched };
 }
 
@@ -328,8 +355,12 @@ function chooseCategory(bookmark, profile) {
     category: winner.name,
     confidence: winner.score,
     progress: hasBodyText || !/^https?:\/\//i.test(bookmark.url) ? 100 : analyzed ? 60 : 45,
-    reason: winner.matched.length
-      ? `${hasBodyText ? "正文命中" : "命中"}：${winner.matched.slice(0, 4).join("、")}`
+    reason: winner.matched.some((item) => item.startsWith("维基百科:"))
+      ? `维基百科命中：${[...new Set(winner.matched.map((item) => item.replace(/^维基百科:/, "")))]
+          .slice(0, 4)
+          .join("、")}`
+      : winner.matched.length
+        ? `${hasBodyText ? "正文命中" : "命中"}：${winner.matched.slice(0, 4).join("、")}`
       : "根据链接页面信息判断",
   };
 }
@@ -362,6 +393,11 @@ async function classifyBookmarks() {
     setStatus("请先填写行业和职业。");
     return;
   }
+  if (needsServerRuntime()) {
+    setStatus("自动分类需要后端服务。请用线上地址或 http://localhost:4173 打开应用，不要直接打开 HTML 文件。");
+    updateClassifyAvailability();
+    return;
+  }
   if (state.classifying) return;
   state.classifying = true;
   setWorkingButton(elements.classifyBtn, "识别中", 0, 1);
@@ -383,7 +419,7 @@ async function classifyBookmarks() {
     label: "分类进度",
   });
   setWorkingButton(elements.classifyBtn, "第一遍", 0, Math.max(targets.length * 2, 1));
-  const chunkSize = 48;
+  const chunkSize = 12;
   let analyzed = 0;
   for (let start = 0; start < targets.length; start += chunkSize) {
     const chunk = targets.slice(start, start + chunkSize);
@@ -395,7 +431,7 @@ async function classifyBookmarks() {
     });
     setWorkingButton(elements.classifyBtn, "第一遍", analyzed, targets.length * 2);
     setStatus(
-      `第一遍：读取链接标题和页面描述 ${analyzed + 1}-${Math.min(analyzed + chunk.length, targets.length)} / ${targets.length}`,
+      `第一遍：读取链接标题、页面描述和维基百科域名结果 ${analyzed + 1}-${Math.min(analyzed + chunk.length, targets.length)} / ${targets.length}`,
     );
     const response = await fetch("/api/analyze-links", {
       method: "POST",
@@ -648,15 +684,18 @@ function updateProfileState() {
 function updateClassifyAvailability() {
   const hasBookmarks = state.bookmarks.length > 0;
   const ready = hasProfile();
-  elements.classifyBtn.disabled = state.classifying || !ready || !hasBookmarks;
+  const serverReady = !needsServerRuntime();
+  elements.classifyBtn.disabled = state.classifying || !ready || !hasBookmarks || !serverReady;
   if (!hasBookmarks) {
     elements.classifyHint.textContent = "先导入书签，并填写行业和职业后才能开始两遍分类。";
+  } else if (!serverReady) {
+    elements.classifyHint.textContent = "自动分类需要后端服务。请打开线上应用，或先运行本地服务后访问 http://localhost:4173。";
   } else if (!ready) {
     elements.classifyHint.textContent = `已导入书签；请先填写${profileMissingText()}，用于决定分类权重。`;
   } else if (state.classifying) {
-    elements.classifyHint.textContent = "正在执行两遍分类：先读链接元信息，再读页面正文文案。";
+    elements.classifyHint.textContent = "正在执行两遍分类：先读链接元信息和维基百科域名结果，再读页面正文文案。";
   } else {
-    elements.classifyHint.textContent = "第一遍读标题、域名和网页描述；第二遍读页面正文，尽量减少待整理。";
+    elements.classifyHint.textContent = "第一遍读标题、域名、网页描述和维基百科搜索结果；维基百科慢或失败会跳过，不阻塞分类。";
   }
 }
 
