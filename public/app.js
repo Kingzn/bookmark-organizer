@@ -4,15 +4,14 @@ const tones = ["teal", "blue", "coral", "amber", "green", "violet"];
 
 const linkCategoryRules = [
   { name: "AI模型与助手", keywords: ["openai", "chatgpt", "claude", "gemini", "grok", "kimi", "deepseek", "qwen", "大语言", "llm", "模型", "智能体", "agent", "prompt", "ai assistant"] },
-  { name: "AI图像视频创作", keywords: ["midjourney", "stable diffusion", "comfyui", "可灵", "海螺", "hailuo", "runway", "pika", "绘画", "生图", "视频生成", "ai video", "image generation", "aigc"] },
+  { name: "AI图像视频创作", keywords: ["midjourney", "stable diffusion", "comfyui", "runway", "pika", "绘画", "生图", "视频生成", "ai video", "image generation", "aigc"] },
   { name: "AI编程与开发助手", keywords: ["cursor", "trae", "copilot", "windsurf", "cline", "代码助手", "ai coding", "ide", "mcp", "agentic coding"] },
-  { name: "设计素材与图片", keywords: ["shutterstock", "freepik", "pixabay", "unsplash", "depositphotos", "素材", "图片", "图库", "矢量", "插画", "icon", "图标", "站酷", "zcool", "花瓣", "behance", "dribbble", "graphics", "graphic design", "image editing", "creative software", "设计软件", "创意软件"] },
+  { name: "设计素材与创意资源", keywords: ["adobe", "shutterstock", "freepik", "pixabay", "unsplash", "depositphotos", "素材", "图片", "图库", "矢量", "插画", "icon", "图标", "behance", "dribbble", "graphics", "graphic design", "image editing", "creative software", "设计软件", "创意软件"] },
   { name: "品牌字体与配色", keywords: ["font", "fonts", "字体", "配色", "color", "palette", "logo", "brand", "品牌", "规范", "ui gradients", "色彩"] },
-  { name: "3D模型与打印", keywords: ["thingiverse", "ultimaker", "cura", "3d", "模型", "打印", "stl", "c4d", "blender", "gambody", "cg", "render"] },
-  { name: "生物医药公司", keywords: ["biotech", "pharma", "genomics", "gene", "cell", "protein", "antibody", "illumina", "mindray", "华大", "迈瑞", "生物", "医药", "基因", "细胞", "抗体", "试剂"] },
-  { name: "医学文献与监管", keywords: ["pubmed", "ncbi", "nmpa", "fda", "clinical", "药监", "医疗器械", "临床", "论文", "文献", "指南", "标准"] },
+  { name: "3D与数字内容", keywords: ["thingiverse", "ultimaker", "cura", "3d", "模型", "打印", "stl", "c4d", "blender", "cgtrader", "turbosquid", "cg", "render"] },
+  { name: "健康医疗与科研", keywords: ["health", "medical", "medicine", "healthcare", "biotech", "pharma", "genomics", "gene", "cell", "protein", "pubmed", "ncbi", "clinical", "fda", "健康", "医疗", "医学", "科研", "论文", "文献", "临床", "指南"] },
   { name: "在线转换与实用工具", keywords: ["convert", "converter", "compress", "pdf", "ocr", "resize", "download", "tester", "generator", "utility", "utilities", "tool", "在线", "转换", "压缩", "识别", "生成器", "测试", "实用程序"] },
-  { name: "营销与公众号运营", keywords: ["marketing", "seo", "ads", "analytics", "campaign", "公众号", "微信", "舆情", "营销", "广告", "海报", "h5", "xiumi", "eqxiu", "crm"] },
+  { name: "营销与增长", keywords: ["marketing", "seo", "ads", "analytics", "campaign", "social media marketing", "content marketing", "营销", "广告", "海报", "活动", "增长", "crm"] },
   { name: "建站域名与云服务", keywords: ["wordpress", "wix", "domain", "hosting", "dns", "cloudflare", "aliyun", "腾讯云", "vercel", "netlify", "建站", "域名", "服务器", "ssl"] },
   { name: "开发技术与开源项目", keywords: ["github", "gitlab", "gitee", "stackoverflow", "developer", "docs", "api", "npm", "docker", "python", "javascript", "wireshark", "microsoft learn", "sdk", "software development", "programming", "open source", "open-source", "developer platform", "软件开发", "编程", "开源"] },
   { name: "课程教程与知识库", keywords: ["教程", "课程", "学习", "academy", "khan", "wiki", "知乎", "csdn", "cnblogs", "bilibili", "文档", "learn", "manual", "training"] },
@@ -20,16 +19,18 @@ const linkCategoryRules = [
   { name: "邮箱账号与登录入口", keywords: ["mail", "gmail", "qq.com", "163.com", "alimail", "accounts", "login", "signin", "登录", "邮箱", "收件箱", "account"] },
   { name: "社交博客与内容平台", keywords: ["facebook", "instagram", "twitter", "x.com", "weibo", "renren", "sina", "blog", "wordpress", "博客", "社区", "论坛", "小红书", "social networking", "social media", "microblogging", "社交网络", "社交媒体"] },
   { name: "影音娱乐与游戏", keywords: ["netflix", "youtube", "music", "video", "movie", "game", "游戏", "电影", "音乐", "视频", "podcast", "bilibili"] },
-  { name: "网络代理与安全", keywords: ["clash", "v2ray", "trojan", "vpn", "proxy", "shadowsocks", "riolu", "fanqiang", "代理", "科学上网", "翻墙", "机场", "安全"] },
-  { name: "政务金融与个人事务", keywords: ["gov", "政府", "政务", "银行", "金融", "征信", "信用", "房屋", "登记", "税务", "公积金"] },
+  { name: "网络与安全", keywords: ["security", "cybersecurity", "vpn", "proxy", "privacy", "password", "firewall", "安全", "隐私", "密码", "网络", "防火墙"] },
+  { name: "政务金融与生活服务", keywords: ["gov", "government", "bank", "finance", "insurance", "tax", "credit", "real estate", "政府", "政务", "银行", "金融", "保险", "信用", "登记", "税务", "生活服务"] },
+  { name: "新闻媒体与资讯", keywords: ["news", "media", "newspaper", "magazine", "press", "newsletter", "新闻", "媒体", "资讯", "日报", "杂志"] },
+  { name: "电商购物与消费", keywords: ["shop", "store", "mall", "amazon", "taobao", "jd.com", "tmall", "ecommerce", "retail", "购物", "电商", "商城", "订单", "零售"] },
 ];
 
 const domainCategoryRules = [
-  { category: "设计素材与图片", domains: ["adobe.com", "stock.adobe.com", "shutterstock.com", "freepik.com", "pixabay.com", "unsplash.com", "depositphotos.com", "behance.net", "dribbble.com", "zcool.com.cn", "huaban.com"] },
-  { category: "3D模型与打印", domains: ["thingiverse.com", "ultimaker.com", "gambody.com", "cgtrader.com", "turbosquid.com"] },
+  { category: "设计素材与创意资源", domains: ["adobe.com", "stock.adobe.com", "shutterstock.com", "freepik.com", "pixabay.com", "unsplash.com", "depositphotos.com", "behance.net", "dribbble.com"] },
+  { category: "3D与数字内容", domains: ["thingiverse.com", "ultimaker.com", "cgtrader.com", "turbosquid.com"] },
   { category: "AI模型与助手", domains: ["openai.com", "chatgpt.com", "claude.ai", "gemini.google.com", "deepseek.com", "kimi.moonshot.cn"] },
   { category: "开发技术与开源项目", domains: ["github.com", "gitlab.com", "gitee.com", "stackoverflow.com", "npmjs.com", "developer.mozilla.org", "learn.microsoft.com"] },
-  { category: "营销与公众号运营", domains: ["mp.weixin.qq.com", "xiumi.us", "eqxiu.com", "analytics.google.com"] },
+  { category: "营销与增长", domains: ["analytics.google.com"] },
   { category: "邮箱账号与登录入口", domains: ["mail.google.com", "gmail.com", "mail.qq.com", "mail.163.com", "qiye.aliyun.com"] },
   { category: "社交博客与内容平台", domains: ["instagram.com"] },
 ];
@@ -49,7 +50,6 @@ const elements = {
   profileState: $("#profileState"),
   fileName: $("#fileName"),
   importState: $("#importState"),
-  loadLocalBtn: $("#loadLocalBtn"),
   fileInput: $("#fileInput"),
   classifyBtn: $("#classifyBtn"),
   classifyHint: $("#classifyHint"),
@@ -593,14 +593,6 @@ function fallbackCount() {
   return state.bookmarks.filter((bookmark) => !bookmark.deleted && bookmark.category === fallbackCategory).length;
 }
 
-async function loadLocalBookmarks() {
-  setStatus("正在载入当前书签包。");
-  const response = await fetch("/api/local-bookmarks");
-  const payload = await response.json();
-  if (!payload.ok) throw new Error(payload.message || "载入失败");
-  loadHtml(payload.content, payload.filename);
-}
-
 function loadHtml(content, filename) {
   const parsed = parseBookmarks(content);
   state.bookmarks = parsed.bookmarks;
@@ -1014,9 +1006,6 @@ function bindEvents() {
       });
       setStatus(error.message);
     });
-  });
-  elements.loadLocalBtn?.addEventListener("click", () => {
-    loadLocalBookmarks().catch((error) => setStatus(error.message));
   });
   elements.fileInput.addEventListener("change", async () => {
     const file = elements.fileInput.files?.[0];
