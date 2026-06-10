@@ -218,11 +218,6 @@ button:focus-visible {
   margin-top: 10px;
 }
 
-#loadLocalBtn,
-#loadLocalBtn + .action-hint {
-  display: none;
-}
-
 .primary-action {
   background: var(--teal);
   border-color: var(--teal);
