@@ -1,6 +1,6 @@
 import http from "node:http";
-import { readFile, stat } from "node:fs/promises";
-import { createReadStream, existsSync } from "node:fs";
+import { stat } from "node:fs/promises";
+import { createReadStream } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -8,7 +8,6 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const publicDir = path.join(__dirname, "public");
 const port = Number(process.env.PORT || 4173);
 const host = /^[a-z0-9.:-]+$/i.test(process.env.HOST || "") ? process.env.HOST : "0.0.0.0";
-const defaultBookmarkFile = process.env.BOOKMARK_FILE || "";
 
 const mimeTypes = new Map([
   [".html", "text/html; charset=utf-8"],
@@ -494,20 +493,6 @@ async function mapWithConcurrency(items, limit, worker) {
 const server = http.createServer(async (req, res) => {
   try {
     const url = new URL(req.url, `http://${req.headers.host}`);
-
-    if (req.method === "GET" && url.pathname === "/api/local-bookmarks") {
-      if (!existsSync(defaultBookmarkFile)) {
-        sendJson(res, 404, { ok: false, message: "没有找到默认书签文件" });
-        return;
-      }
-      const content = await readFile(defaultBookmarkFile, "utf8");
-      sendJson(res, 200, {
-        ok: true,
-        filename: path.basename(defaultBookmarkFile),
-        content,
-      });
-      return;
-    }
 
     if (req.method === "POST" && url.pathname === "/api/check-links") {
       const payload = await readRequestJson(req);
